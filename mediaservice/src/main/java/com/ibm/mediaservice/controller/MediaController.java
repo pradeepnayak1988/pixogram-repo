@@ -1,9 +1,10 @@
 package com.ibm.mediaservice.controller;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -21,21 +22,31 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ibm.mediaservice.dto.MediaDTO;
 import com.ibm.mediaservice.dto.MediaRequest;
 import com.ibm.mediaservice.entity.Media;
+import com.ibm.mediaservice.exception.StorageException;
 import com.ibm.mediaservice.models.AuthenticationRequest;
 import com.ibm.mediaservice.models.AuthenticationResponse;
 import com.ibm.mediaservice.service.MediaService;
 import com.ibm.mediaservice.service.UserServiceImpl;
 import com.ibm.mediaservice.util.JwtUtil;
+
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping({"/authenticate"})
-
 public class MediaController {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -83,9 +94,7 @@ public class MediaController {
 			response = saveuploadfile(mediaDTO, request,userid);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
-			log.info("Exception: " + e);
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			throw new StorageException("Failed to store empty file " + mediaDTO.getFile());
 		}
 		return response;
 	}
@@ -101,51 +110,67 @@ public class MediaController {
 			}
 			return response;
 		} catch (Exception e) {
-			e.printStackTrace();
-			log.info("Exception: " + e);
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			throw new StorageException("Failed to store multiple files for this user id" + userid);
 		}
 	}
 
 	private ResponseEntity<String> saveuploadfile(MediaDTO mediaDTO, HttpServletRequest request, String userId) throws Exception {
-		String uploadDirectory = request.getServletContext().getRealPath(uploadFolder);
-		MultipartFile file = mediaDTO.getFile();
-		String fileName = file.getOriginalFilename();
-		String filePath = Paths.get(uploadDirectory, fileName).toString();
-		log.info("FileName: " + mediaDTO.getFile().getOriginalFilename());
-
-		Date createDate = new Date();
-
+		
+		//String uploadDirectory = request.getServletContext().getRealPath(uploadFolder);
+		Path filePath = null ;
+		String fileName = null;
+		String uploadDirectory = uploadFolder +"/"+ userId;
+		
 		try {
-			File dir = new File(uploadDirectory);
-			if (!dir.exists()) {
-				log.info("Folder Created");
-				dir.mkdirs();
+			MultipartFile multipartFile = mediaDTO.getFile();
+			fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+			Path uploadPath = Paths.get(uploadDirectory);
+			log.info("FileName: " + mediaDTO.getFile().getOriginalFilename());
+
+			Date createDate = new Date();
+
+			if (!Files.exists(uploadPath)) {
+				try {
+					Files.createDirectories(uploadPath);
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
-			// Save the file locally
-			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(filePath)));
-			stream.write(file.getBytes());
-			stream.close();
-		} catch (Exception e) {
-			log.info("in catch");
-			e.printStackTrace();
+			if (multipartFile.isEmpty() || fileName.isEmpty() ) {
+                throw new StorageException("Failed to store empty file " + multipartFile);
+            }
+			if (fileName.contains("..")) {
+                throw new StorageException(
+                        "Cannot store file with relative path outside current directory "
+                                + fileName);
+            }
+			Path destination = Paths.get(uploadPath.toString()+"\\"+fileName);
+			try {
+				filePath = uploadPath.resolve(fileName);
+				Files.copy(multipartFile.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException ioe) {
+				throw new IOException("Could not save image file: " + fileName, ioe);
+			}
+
+			byte[] imageData = multipartFile.getBytes();
+			log.info("uploadDirectory:: " + uploadDirectory);
+
+			Media media = new Media();
+			media.setTags(Arrays.asList(mediaDTO.getTags()));
+			media.setEffects(Arrays.asList(mediaDTO.getEffect()));
+			media.setUserid(userId);
+			media.setFilename(fileName);
+			media.setMediaurl(filePath.toString());
+			media.setType(multipartFile.getContentType());
+			media.setImage(imageData);
+			media.setDescription(mediaDTO.getDesc());
+			media.setUpload_date(createDate);
+			mediaService.saveFile(media);
+			log.info("HttpStatus===" + new ResponseEntity<>(HttpStatus.OK));
 		}
-
-		byte[] imageData = file.getBytes();
-		log.info("uploadDirectory:: " + uploadDirectory);
-
-		Media media = new Media();
-		media.setTags(Arrays.asList(mediaDTO.getTags()));
-		media.setEffects(Arrays.asList(mediaDTO.getEffect()));
-		media.setUserid(userId);
-		media.setFilename(fileName);
-		media.setMediaurl(filePath);
-		media.setType(file.getContentType());
-		media.setImage(imageData);
-		media.setDescription(mediaDTO.getDesc());
-		media.setUpload_date(createDate);
-		mediaService.saveFile(media);
-		log.info("HttpStatus===" + new ResponseEntity<>(HttpStatus.OK));
+		catch(IOException ex) {
+			throw new StorageException("Failed to store file " + fileName, ex);
+		}
 		return new ResponseEntity<String>("Product Saved With File - " + fileName, HttpStatus.OK);
 	}
 	@GetMapping(value = "/media/user/{userid}")
@@ -155,9 +180,7 @@ public class MediaController {
 		try {
 			response = mediaService.getMediaListByUserId(userid);
 		} catch (Exception e) {
-			e.printStackTrace();
-			log.info("Exception: " + e);
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			throw new StorageException("Failed to get the files by user " + userid, e);
 		}
 		return new ResponseEntity<List<Media>>(response, HttpStatus.OK);
 	}
@@ -169,9 +192,7 @@ public class MediaController {
 		try {
 			response = mediaService.getMediaById(mediaid);
 		} catch (Exception e) {
-			e.printStackTrace();
-			log.info("Exception: " + e);
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			throw new StorageException("Failed to get the file by search " + mediaid, e);
 		}
 		return new ResponseEntity<Optional<Media>>(response, HttpStatus.OK);
 	}
@@ -183,9 +204,7 @@ public class MediaController {
 		try {
 			response = mediaService.getMediaByUserIdAndMediaId(userid, mediaid);
 		} catch (Exception e) {
-			e.printStackTrace();
-			log.info("Exception: " + e);
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			throw new StorageException("Failed to get the file by media id and user id " + mediaid + userid, e);
 		}
 		return new ResponseEntity<Optional<Media>>(response, HttpStatus.OK);
 	}
@@ -202,9 +221,7 @@ public class MediaController {
 			updateMedia.setUserid(userid);
 			mediaService.saveFile(updateMedia);
 		} catch (Exception e) {
-			e.printStackTrace();
-			log.info("Exception: " + e);
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			throw new StorageException("Failed to update the media " + mediaid + userid, e);
 		}
 		return new ResponseEntity<Optional<Media>>(response, HttpStatus.OK);
 	}

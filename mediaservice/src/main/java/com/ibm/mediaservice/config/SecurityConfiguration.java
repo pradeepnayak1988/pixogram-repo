@@ -60,7 +60,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		
 			logger.info("Inside configure method endpoint authentication via jwt...");
 			//allowing the "/authenticate" end point without re-directing to the login page by spring security
-			http.csrf().disable()
+			http.cors().and()
+		    .csrf().disable()
 			.authorizeRequests().antMatchers("/authenticate").permitAll()
 			.anyRequest().authenticated()
 			.and().sessionManagement()

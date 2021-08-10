@@ -44,7 +44,7 @@ import com.ibm.mediaservice.service.MediaService;
 import com.ibm.mediaservice.service.UserServiceImpl;
 import com.ibm.mediaservice.util.JwtUtil;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping({"/authenticate"})
 public class MediaController {

@@ -46,7 +46,7 @@ import com.ibm.mediaservice.util.JwtUtil;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping({"/authenticate"})
+//@RequestMapping({"/authenticate"})
 public class MediaController {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -60,17 +60,17 @@ public class MediaController {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 	
-	@Autowired
-	private UserServiceImpl userDetailsService;
+	//@Autowired
+	//private UserServiceImpl userDetailsService;
 	
-	@Autowired
-	private JwtUtil jwtTokenUtil;
+	//@Autowired
+	//private JwtUtil jwtTokenUtil;
 
 	//test end point for jwt
 	@GetMapping(value = "/test")
 	public String test() {	return "Authentication test successful!"; }
 	
-	@PostMapping
+	@PostMapping(value = "/authenticate")
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest)
 			throws Exception {
 		try {
@@ -79,9 +79,11 @@ public class MediaController {
 		} catch (BadCredentialsException e) {
 			throw new Exception("Incorrect username or password", e);
 		}
-		final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-		final String jwt = jwtTokenUtil.generateToken(userDetails);
-		return ResponseEntity.ok(new AuthenticationResponse(jwt));
+		
+		//final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+		//final String jwt = jwtTokenUtil.generateToken(userDetails);
+		//return ResponseEntity.ok(new AuthenticationResponse(jwt));
+		return new ResponseEntity<>("Successfully Authenticated!", HttpStatus.OK);
 	}
 	 
 

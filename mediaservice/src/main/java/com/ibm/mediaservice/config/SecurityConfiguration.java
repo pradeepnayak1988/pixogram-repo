@@ -13,9 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+//import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.ibm.mediaservice.filters.JwtRequestFilter;
+//import com.ibm.mediaservice.filters.JwtRequestFilter;
 import com.ibm.mediaservice.service.UserService;
 
 
@@ -28,8 +28,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private UserService userService;
 	
-	@Autowired
-	private JwtRequestFilter jwtRequestFilter;
+	//@Autowired
+	//private JwtRequestFilter jwtRequestFilter;
 	
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
@@ -62,11 +62,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			//allowing the "/authenticate" end point without re-directing to the login page by spring security
 			http.cors().and()
 		    .csrf().disable()
-			.authorizeRequests().antMatchers("/authenticate").permitAll()
+			.authorizeRequests().antMatchers("/**").permitAll()
 			.anyRequest().authenticated()
 			.and().sessionManagement()
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-			http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);		
+			//http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);		
 	}
 	
 }

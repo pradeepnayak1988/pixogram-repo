@@ -55,6 +55,9 @@ public class MediaController {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	
+	@Value("${welcome.message: default value}")
+	private String welcomeMessage;
+	
 	@Value("${uploadDir}")
 	private String uploadFolder;
 
@@ -75,7 +78,7 @@ public class MediaController {
 
 	//test end point for jwt
 	@GetMapping(value = "/test")
-	public String test() {	return "Authentication test successful!"; }
+	public String test() {	return welcomeMessage; }
 	
 	@PostMapping(value = "/authenticate")
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest)

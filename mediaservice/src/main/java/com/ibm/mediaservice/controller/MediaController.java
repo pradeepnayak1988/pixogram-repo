@@ -187,7 +187,8 @@ public class MediaController {
 		catch(IOException ex) {
 			throw new StorageException("Failed to store file " + fileName, ex);
 		}
-		return new ResponseEntity<String>("Product Saved With File - " + fileName, HttpStatus.OK);
+		//return new ResponseEntity<String>("Product Saved With File - " + fileName, HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	

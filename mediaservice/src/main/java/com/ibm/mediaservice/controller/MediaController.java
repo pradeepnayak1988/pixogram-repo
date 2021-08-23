@@ -136,7 +136,8 @@ public class MediaController {
 		
 		try {
 			MultipartFile multipartFile = mediaDTO.getFile();
-			fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+			//fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+			fileName = (null!=mediaDTO.getTitle()) ? mediaDTO.getTitle():StringUtils.cleanPath(multipartFile.getOriginalFilename());fileName = (null!=mediaDTO.getTitle()) ? mediaDTO.getTitle():StringUtils.cleanPath(multipartFile.getOriginalFilename());
 			Path uploadPath = Paths.get(uploadDirectory);
 			log.info("FileName: " + mediaDTO.getFile().getOriginalFilename());
 

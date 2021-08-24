@@ -1,0 +1,47 @@
+p {
+font-family: Lato;
+}
+.example-card {
+max-width: 500px;
+margin: 4px;
+padding:4px;
+text-align: center;
+}
+
+mat-card-subtitle{
+font-size:30px
+}
+
+mat-card-title{
+
+font-size:10px;
+
+}
+ ::ng-deep .mat-card{
+   border: 55px solid #000;
+    border-radius: 30px !important;
+    border: #000 !important;
+   }
+
+.mat-card-header{
+  background-image: linear-gradient(to bottom right, lightgreen, yellow);
+  border-radius: 30px !important;
+  margin:4px;
+  text-align: center;
+ font-size: 18px;
+}
+.mat-card-header .mat-card-title {
+    font-size: 18px;
+    text-align:center;
+    width:200px;
+    padding-top:2px;
+}
+.mat-card-actions{
+  margin:4px;
+  text-align: center;
+}
+.mat-icon{
+margin-left:10px;
+margin-right:10px;
+}
+

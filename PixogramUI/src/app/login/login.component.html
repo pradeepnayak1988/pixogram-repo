@@ -1,0 +1,46 @@
+<head>
+  <meta charset="utf-8">
+  <title>PixogramUI</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body class="mat-typography">
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <span>Pixogram</span>
+  </mat-toolbar-row>
+</mat-toolbar>
+<div class="main-div" fxLayout="row" fxLayoutAlign="center center">
+<mat-card class="login-card" >
+  <mat-card-header >
+    <mat-card-title style="align:center">Login</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="example-form">
+      <table class="example-full-width" cellspacing="0">
+        <tr>
+          <td>
+            <mat-form-field class="example-full-width" >
+              <input matInput placeholder="Username" [(ngModel)]="username" name="username" required>
+            </mat-form-field>
+          </td>
+        </tr>
+        <tr>
+          <td><mat-form-field class="example-full-width">
+            <input matInput placeholder="Password" [(ngModel)]="password"type="password" name="password" required>
+          </mat-form-field></td>
+        </tr></table>
+    </form>
+
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button (click)="login()" color="primary">Login</button>
+    <button mat-raised-button (click)="register()"  color="primary">Register</button>
+  </mat-card-actions>
+</mat-card>
+</div>
+</body>

@@ -1,0 +1,66 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row align="center">
+    <div> <mat-icon>face</mat-icon></div>
+    <div> {{this.username}}</div>
+    <div style="width:400px;"></div>
+    <div class="example-button-row">
+      <a mat-raised-button color="accent"  target="_blank">Upload Media</a>
+    </div>
+    <div class="example-button-row">
+      <a mat-stroked-button routerLink="/mymedia" >My Media</a>
+    </div>
+    <div class="example-button-row">
+      <a mat-stroked-button  target="_blank">Followers/Following</a>
+    </div>
+    <div style="width:650px;"></div>
+    <div class="example-button-row">
+      <a mat-stroked-button  target="_blank">Account</a>
+    </div>
+  </mat-toolbar-row>
+</mat-toolbar>
+<div class="header"> <span style="font: bold important;">New Media page</span></div>
+<div style="text-align:center; margin-top: 100px; ">
+
+
+  <input type="file" #fileUpload id="fileUpload" name="fileUpload" multiple="multiple" accept="image/*" style="display:none;" />
+<mat-form-field class="example-full-width" appearance="fill">
+  <mat-label>Title</mat-label>
+  <input matInput [(ngModel)]="title">
+</mat-form-field> <br/>
+  <mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>Description</mat-label>
+    <input matInput [(ngModel)]="desc">
+  </mat-form-field><br/>
+  <mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>Tags</mat-label>
+    <input matInput [(ngModel)]="tags">
+  </mat-form-field>
+  <br><br>
+
+  <mat-radio-group aria-label="Effects" [(ngModel)]="effect">
+    <mat-radio-button value="1">Sepia</mat-radio-button>
+    <mat-radio-button value="2">Grey</mat-radio-button>
+    <mat-radio-button value="2">Brightness</mat-radio-button>
+    <mat-radio-button value="2">Contrast</mat-radio-button>
+  </mat-radio-group>
+
+
+  <mat-card class="upload-card" >
+    <mat-card-content style="width: 100%; " >
+      <ul>
+        <li *ngFor="let file of files">
+          <mat-progress-bar [value]="file.progress"></mat-progress-bar>
+          <span id="file-label">
+ <mat-card-title>{{file.data.name}}</mat-card-title>
+                    </span>
+        </li>
+      </ul>
+    </mat-card-content>
+    <mat-card-actions>
+      <button class="uploadbutton" mat-raised-button color="accent"  (click)="onClick()">
+        <mat-icon>file_upload</mat-icon>
+        Upload
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

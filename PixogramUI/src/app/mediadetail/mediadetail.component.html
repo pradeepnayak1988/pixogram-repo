@@ -1,0 +1,58 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row align="center">
+    <div> <mat-icon>face</mat-icon></div>
+    <div> {{this.username}}</div>
+    <div style="width:400px;"></div>
+    <div class="example-button-row">
+      <a mat-stroked-button routerLink="/uploadmedia">Upload Media</a>
+    </div>
+    <div class="example-button-row">
+      <a mat-raised-button color="accent" routerLink="/mymedia" >My Media</a>
+    </div>
+    <div class="example-button-row">
+      <a mat-stroked-button>Followers/Following</a>
+    </div>
+    <div style="width:650px;"></div>
+    <div class="example-button-row">
+      <a mat-stroked-button  target="_blank">Account</a>
+    </div>
+  </mat-toolbar-row>
+</mat-toolbar>
+<div class="header"> <span style="font: bold important;">Media Detail</span></div>
+<table><tr>
+  <td>
+<mat-card class="my-card"  >
+  <mat-card-header >
+    <mat-card-title>{{media.filename}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content >
+    <img class="card-img-top" src="{{media.mediaurl}}" alt="Card image cap" width="800" height="570"/>
+
+  </mat-card-content  >
+
+</mat-card>
+  </td>
+  <td style="width:100px;"></td>
+  <td >
+    <mat-card class="my-card" style="width:400px;height:600px;  background-image: linear-gradient(to bottom right, lightgreen, yellow);" >
+
+      <mat-card-content >
+
+        <div class="desc">
+          <span ><b>Effect:</b></span> {{media.effect}} <br><br><br>
+          <span ><b>Description:</b></span> {{media.description}} <br><br><br>
+          <span ><b>Tags:</b></span> {{media.tags}} <br><br><br>
+          <span ><b>Comments:</b></span><br>
+
+          <div class="comment">Awesome click!</div> <br>
+          <div class="comment">Beautiful picture. Like it a lot.</div> <br>
+          <div class="comment">Which place is this?</div> <br>
+
+        </div>
+
+      </mat-card-content  >
+
+    </mat-card>
+
+</td>
+</tr></table>

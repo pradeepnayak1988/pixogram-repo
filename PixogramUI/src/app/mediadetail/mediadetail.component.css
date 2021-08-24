@@ -1,0 +1,24 @@
+.header{
+  background-image: linear-gradient(to bottom right, lightgreen, yellow);
+  margin:4px;
+  text-align: center;
+ font-size: 18px;
+ padding: 5px;
+}
+
+.container-flex{
+flex-direction: row
+}
+.desc{
+font: arial bold 20px important;
+
+}
+
+.comment{
+background-image: linear-gradient(to bottom right, lightgreen, yellow);
+  border-radius: 30px !important;
+  height: 30px;
+  width: 250 px important;
+  padding: 5px;
+}
+

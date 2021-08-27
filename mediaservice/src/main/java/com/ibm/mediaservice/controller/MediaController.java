@@ -45,6 +45,8 @@ import com.ibm.mediaservice.dto.MediaRequest;
 import com.ibm.mediaservice.entity.Media;
 import com.ibm.mediaservice.exception.StorageException;
 import com.ibm.mediaservice.models.AuthenticationRequest;
+import com.ibm.mediaservice.models.AuthenticationResponse;
+import com.ibm.mediaservice.models.User;
 import com.ibm.mediaservice.service.MediaService;
 import com.ibm.mediaservice.util.MediaUtil;
 
@@ -90,10 +92,13 @@ public class MediaController {
 			throw new Exception("Incorrect username or password", e);
 		}
 		
+		User user = mediaService.getUserIdByUserName(authenticationRequest.getUsername());
+		log.info("UserId returned Is: "+user.getId());
 		//final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 		//final String jwt = jwtTokenUtil.generateToken(userDetails);
 		//return ResponseEntity.ok(new AuthenticationResponse(jwt));
-		return new ResponseEntity<>(HttpStatus.OK);
+		//return new ResponseEntity<>(HttpStatus.OK);
+		return ResponseEntity.ok(new AuthenticationResponse(user.getId().toString()));
 	}
 	 
 

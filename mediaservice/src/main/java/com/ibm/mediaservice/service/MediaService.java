@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ibm.mediaservice.entity.Media;
+import com.ibm.mediaservice.models.User;
 import com.ibm.mediaservice.repository.MediaRepository;
+import com.ibm.mediaservice.repository.UserRepository;
 
 
 
@@ -16,6 +18,9 @@ public class MediaService {
 
 	@Autowired
 	private MediaRepository mediaRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	public void saveFile(Media media) {
 		mediaRepository.save(media);	
@@ -31,6 +36,10 @@ public class MediaService {
 	
 	public  Optional<Media> getMediaById(Long mediaId) {
 		return mediaRepository.findById(mediaId);
+	}
+
+	public User getUserIdByUserName(String email) {
+		return userRepository.findByEmail(email);
 	}
 }
 
